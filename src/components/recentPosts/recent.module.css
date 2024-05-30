@@ -1,0 +1,50 @@
+/* index.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto 0 0;
+  padding: 20px;
+}
+
+.post {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  max-width: 40vw;
+  margin-bottom: 20px;
+}
+
+.post h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.post p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.loading {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.error {
+  font-size: 20px;
+  text-align: center;
+  color: red;
+}
+.heading{
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.image{
+    width: 80%;
+    height: 300px;
+    object-fit: cover;
+    margin:0 auto ;
+    border-radius: 5px;
+}
