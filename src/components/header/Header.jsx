@@ -28,6 +28,10 @@ const Header = () => {
         <Link href="/" className={styles.link}>
           About
         </Link>
+        <Link href="/write" className={styles.link}>
+        Write
+        </Link>
+
         <Link href="/login" className={styles.link}>
           Login
         </Link>
