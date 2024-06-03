@@ -15,7 +15,6 @@ datasource db {
 
 model Post {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  slug     String    @unique
   title    String
   image   String ?
   body     String
@@ -30,7 +29,6 @@ model User {
   email   String   @unique
   name    String?
   picture String?
-  address Address?
   posts   Post[]
 }
 
