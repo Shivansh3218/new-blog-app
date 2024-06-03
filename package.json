@@ -14,6 +14,7 @@
     "@mui/material": "^5.15.18",
     "@prisma/client": "^5.14.0",
     "framer-motion": "^11.2.5",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "next": "14.2.3",
     "next-auth": "^4.24.7",

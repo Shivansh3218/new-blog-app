@@ -5,9 +5,13 @@ import { useState, useEffect } from "react";
 import styles from "./loginPage.module.css";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import { useContext } from "react";
+import {AuthContext} from "@/context/AuthContext";
 
 const LoginPage = () => {
   const router = useRouter();
+  const { setUser } = useContext(AuthContext);
 
   const handleCallbackResponse = async (response) => {
     let jwtToken = response.credential;
@@ -21,6 +25,8 @@ const LoginPage = () => {
       const userResponse = await fetch(`/api/users/user?email=${email}`);
       const userData = await userResponse.json();
 
+      Cookies.set("user", JSON.stringify({ name, email, picture }));
+      setUser({ name, email, picture });
       if (!userData) {
         // If user doesn't exist, make a POST request to add the user
         const user = await fetch("/api/users", {
@@ -39,8 +45,11 @@ const LoginPage = () => {
       } else {
         // If user exists, log a message
         console.log("User already exists in the database");
-         router.push("/");
+        router.push("/");
       }
+
+      router.push("/");
+      // Store user data in a cookie
     } catch (error) {
       console.error("Error:", error);
     }

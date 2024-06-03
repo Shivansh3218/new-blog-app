@@ -20,6 +20,7 @@ model Post {
   image   String ?
   body     String
   author   User      @relation(fields: [authorId], references: [id])
+  authorEmail String
   authorId String    @db.ObjectId
   comments Comment[]
 }

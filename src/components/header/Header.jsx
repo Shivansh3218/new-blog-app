@@ -4,21 +4,17 @@ import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "@/components/themeToggle/themeToggle";
-// import AuthLinks from "../authLinks/AuthLinks";
-
+import AuthLink from "../auth/AuthLink";
+import Cookies from "js-cookie";
 
 const Header = () => {
+   
+
+
   return (
     <div className={styles.container}>
-      {/* <div className={styles.social}>
-        <Image src="/facebook.png" alt="facebook" width={24} height={24} />
-        <Image src="/instagram.png" alt="instagram" width={24} height={24} />
-        <Image src="/tiktok.png" alt="tiktok" width={24} height={24} />
-        <Image src="/youtube.png" alt="youtube" width={24} height={24} />
-      </div> */}
       <div className={styles.logo}>Dev Sama Blog</div>
       <div className={styles.links}>
-        {/* <ThemeToggle /> */}
         <Link href="/" className={styles.link}>
           Homepage
         </Link>
@@ -28,14 +24,8 @@ const Header = () => {
         <Link href="/" className={styles.link}>
           About
         </Link>
-        <Link href="/write" className={styles.link}>
-        Write
-        </Link>
-
-        <Link href="/login" className={styles.link}>
-          Login
-        </Link>
-        {/* <AuthLinks /> */}
+        <AuthLink className={styles.link} />
+        
         <ThemeToggle />
       </div>
     </div>
