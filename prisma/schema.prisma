@@ -21,6 +21,7 @@ model Post {
   author   User      @relation(fields: [authorId], references: [id])
   authorEmail String
   authorId String    @db.ObjectId
+  categories String[]
   comments Comment[]
 }
 
@@ -39,10 +40,3 @@ model Comment {
   postId  String @db.ObjectId
 }
 
-// Address is an embedded document
-type Address {
-  street String
-  city   String
-  state  String
-  zip    String
-}
