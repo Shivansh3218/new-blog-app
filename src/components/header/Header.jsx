@@ -3,19 +3,20 @@ import React from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import ThemeToggle from "@/components/themeToggle/themeToggle";
+// import ThemeToggle from "@/components/themeToggle/themeToggle";
 import AuthLink from "../auth/AuthLink";
 import Cookies from "js-cookie";
-
 const Header = () => {
    
 
 
   return (
     <div className={styles.container}>
-      <div className={styles.logo}>Dev Sama Blog</div>
+      <Link href="/">
+        <div className={styles.logo}>Dev Sama Blog</div>
+      </Link>
       <div className={styles.links}>
-        <Link href="/" className={styles.link}>
+        {/* <Link href="/" className={styles.link}>
           Homepage
         </Link>
         <Link href="/" className={styles.link}>
@@ -23,10 +24,10 @@ const Header = () => {
         </Link>
         <Link href="/" className={styles.link}>
           About
-        </Link>
+        </Link> */}
         <AuthLink className={styles.link} />
-        
-        <ThemeToggle />
+
+        {/* <ThemeToggle /> */}
       </div>
     </div>
   );

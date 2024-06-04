@@ -1,38 +1,78 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import Cookies from "js-cookie";
-import { useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
-import styles from "./auth.module.css"
+import styles from "./auth.module.css";
 import { useRouter } from "next/navigation";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import CreateIcon from "@mui/icons-material/Create";
+import Image from "next/image";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
+import ThemeToggle from "@/components/themeToggle/themeToggle";
 function AuthLink() {
+  const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
-  // const user = Cookies.get("user");
   const { user, setUser } = useContext(AuthContext);
-  console.log(user, "user");
-    const logout = () => {
-      Cookies.remove("user");
-      // Use your router library to redirect to homepage
-      // For example, with Next.js router:
-        router.push("/");
-        setUser(null);
-    };
+
+  const logout = () => {
+    Cookies.remove("user");
+    router.push("/");
+    setUser(null);
+    handleClose();
+  };
+
+  const handleClickOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       {user ? (
         <>
           <Link href="/write" className={styles.link}>
-            Write
+            <CreateIcon /> &nbsp; Write
           </Link>
-          <button onClick={logout} className={styles.link}>
-            Logout
-          </button>
+          <Image
+            src={user?.picture}
+            alt="Avatar"
+            width={50}
+            height={50}
+            className={styles.avatar}
+            onClick={handleClickOpen}
+          />
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleClose}>
+              <Link href="/myPosts" className={styles.link}>
+                My Posts
+              </Link>
+            </MenuItem>
+            <MenuItem>
+              Swtich Modes &nbsp;
+              <ThemeToggle />
+            </MenuItem>
+            <MenuItem onClick={logout}>
+              <ExitToAppIcon /> &nbsp; Logout
+            </MenuItem>
+          </Menu>
         </>
       ) : (
-        <Link href="/login" className={styles.link}>
-          Login
-        </Link>
+        <>
+          <Link href="/login" className={styles.link}>
+            Login
+          </Link>
+          <ThemeToggle />
+        </>
       )}
     </>
   );

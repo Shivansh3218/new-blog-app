@@ -1,10 +1,10 @@
-// pages/index.js
+// pages/UserPosts.js
 "use client";
 import { useEffect, useState } from "react";
-import styles from "./recent.module.css"; // Import CSS module
+import styles from "./myPosts.module.css"; // Import CSS module
 import Skeleton from "@mui/material/Skeleton";
 
-const RecentPosts = () => {
+const UserPosts = ({ email }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const RecentPosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/posts`);
+        const response = await fetch(`${baseUrl}/api/posts?email=${email}`);
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -27,44 +27,35 @@ const RecentPosts = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [email]);
 
   if (loading) {
     return (
-      <>
       <div className={styles.container}>
-        <Skeleton variant="text" />
-        <Skeleton variant="circular" width={40} height={40} />
         <Skeleton variant="rectangular" width={210} height={118} />
-      </div><div className={styles.container}>
-        <Skeleton variant="text" />
-        <Skeleton variant="circular" width={40} height={40} />
         <Skeleton variant="rectangular" width={210} height={118} />
-      </div><div className={styles.container}>
         <Skeleton variant="text" />
-        <Skeleton variant="circular" width={40} height={40} />
         <Skeleton variant="rectangular" width={210} height={118} />
+        <Skeleton variant="rectangular" width={210} height={118} />
+        <Skeleton variant="text" />
       </div>
-      
-      </>
-     
     );
   }
 
   if (error) {
-    return <p className={styles.error}>Error: {error}</p>; // Apply error class
+    return <p className={styles.error}>Error: {error}</p>;
   }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Recent Posts</h1>
+      <h1 className={styles.heading}>User Posts</h1>
       <ul>
         {posts.map((post) => (
           <li className={styles.post} key={post.id}>
             {post.image ? (
               <img src={post.image} alt="Post Image" className={styles.image} />
             ) : null}
-            <h2 className={styles.title}>{post.title}</h2>
+            <h2>{post.title}</h2>
             <p>{post.body}</p>
           </li>
         ))}
@@ -73,4 +64,4 @@ const RecentPosts = () => {
   );
 };
 
-export default RecentPosts;
+export default UserPosts;

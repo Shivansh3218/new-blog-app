@@ -1,0 +1,35 @@
+/* myPosts.module.css */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.heading {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.post {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  font-size: 1.5em;
+}
