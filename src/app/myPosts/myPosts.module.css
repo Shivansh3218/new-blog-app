@@ -33,3 +33,12 @@
   text-align: center;
   font-size: 1.5em;
 }
+/* styles/myPosts.module.css */
+.message {
+  text-align: center;
+   line-height: 200px;
+  color: #333;
+  font-size: 1.2em;
+  margin-top: 2em;
+  height: 40vh;
+}

@@ -1,19 +1,23 @@
 // pages/UserPosts.js
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import styles from "./myPosts.module.css"; // Import CSS module
 import Skeleton from "@mui/material/Skeleton";
 
+import { AuthContext } from "@/context/AuthContext";
 const UserPosts = ({ email }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/posts?email=${email}`);
+        const response = await fetch(
+          `${baseUrl}/api/posts/userPost/?email=${user?.email}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -44,6 +48,12 @@ const UserPosts = ({ email }) => {
 
   if (error) {
     return <p className={styles.error}>Error: {error}</p>;
+  }
+
+  if (posts.length === 0) {
+    return (
+      <p className={styles.message}>Your written posts will be shown here.</p>
+    );
   }
 
   return (
