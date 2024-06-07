@@ -1,10 +1,11 @@
-.container{
+.container {
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 800px;
 }
 
-.select{
+.select {
   margin-bottom: 50px;
   padding: 10px 20px;
   margin-left: 50px;
@@ -45,7 +46,7 @@
   left: 50px;
 }
 
-.input{
+.input {
   padding: 50px;
   font-size: 35px;
   border: none;
@@ -54,7 +55,7 @@
   color: var(--textColor);
 }
 
-.input::placeholder{
+.input::placeholder {
   color: #b3b3b1;
 }
 
@@ -62,14 +63,48 @@
   width: 100%;
 }
 
-.publish{
+.publish {
   position: absolute;
   top: 0px;
   right: 0px;
   padding: 10px 20px;
   border: none;
-  background-color: #1a8917;
-  color: white;
-  cursor: pointer;
-  border-radius: 20px;
+  background-color: #1a8917; 
+  color: white; 
+  cursor: pointer; 
+  border-radius: 20px; 
 }
+
+.publish.disabled {
+  background-color: #cccccc; 
+  cursor: not-allowed; 
+}
+
+
+
+.categorySelection {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.categoryButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.categoryButton.selected {
+  background-color: gray;
+  color: white;
+}
+
+.categoryButton:hover {
+  background-color: #e0e0e0;
+}
+
