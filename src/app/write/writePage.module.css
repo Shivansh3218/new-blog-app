@@ -23,6 +23,7 @@
 .addButton {
   width: 36px;
   height: 36px;
+  margin-top: 10px;
   border-radius: 50%;
   background-color: transparent;
   border: 1px solid var(--textColor);

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import styles from "./writePage.module.css";
@@ -46,6 +46,10 @@ const WritePage = () => {
   const [title, setTitle] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [submissionMessage, setSubmissionMessage] = useState("");
+  const [quill, setQuill] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const inputRef = useRef();
+
 
   useEffect(() => {
     setIsButtonDisabled(!(title && value && selectedCategories.length > 0));
@@ -86,6 +90,34 @@ const WritePage = () => {
     }
   };
 
+
+
+
+
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        setSelectedImage(event.target.result);
+      };
+
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (quill) {
+      const selection = quill.getSelection();
+      if (selection) {
+        const cursorPosition = selection.index;
+        quill.insertEmbed(cursorPosition, 'image', selectedImage);
+        quill.setSelection(cursorPosition + 1);
+      }
+    }
+  }, [selectedImage]);
+
   return (
     <div className={styles.container}>
       {/* Title input */}
@@ -99,37 +131,43 @@ const WritePage = () => {
 
       {/* Editor */}
       <div className={styles.editor}>
-        <button className={styles.button} onClick={() => setOpen(!open)}>
-          <Image src="/plus.png" alt="Add" width={16} height={16} />
+      <input
+        type="file"
+        id="image"
+        ref={inputRef}
+        style={{ display: "none" }}
+        onChange={handleImageChange}
+      />
+        <button className={styles.addButton} >
+        <label htmlFor="image">
+        <Image src="/image.png" alt="Image" width={16} height={16} />
+        </label>
         </button>
-        {open && (
-          <div className={styles.add}>
-            <input type="file" id="image" style={{ display: "none" }} />
-            <button className={styles.addButton}>
-              <label htmlFor="image">
-                <Image src="/image.png" alt="Image" width={16} height={16} />
-              </label>
-            </button>
-            <button className={styles.addButton}>
-              <Image
-                src="/external.png"
-                alt="External"
-                width={16}
-                height={16}
-              />
-            </button>
-            <button className={styles.addButton}>
-              <Image src="/video.png" alt="Video" width={16} height={16} />
-            </button>
-          </div>
-        )}
-        <ReactQuill
-          className={styles.textArea}
-          theme="bubble"
-          value={value}
-          onChange={setValue}
-          placeholder="Tell your story..."
-        />
+    
+        
+
+      <ReactQuill
+        className={styles.textArea}
+        theme="bubble"
+        value={value}
+        onChange={setValue}
+        placeholder="Tell your story..."
+        modules={{
+          toolbar: {
+            container: [
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ 'header': 1 }, { 'header': 2 }],  // Add headings
+              ['link', 'image', 'code-block'],  // Add link
+            ],
+          },
+        }}
+        formats={['bold', 'italic', 'underline', 'strike', 'header', 'link', 'image', 'code-block']}
+        ref={(el) => {
+          if (el != null) {
+            setQuill(el.getEditor());
+          }
+        }}
+      />
       </div>
 
       {/* Publish button */}
