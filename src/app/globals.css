@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   --bg: white;
   --textColor: black;
   --softBg: #f0f0f0;
   --softTextColor: #626262;
+  --button-bg: #f0f0f0; /* Light gray */
+  --button-color: #333; /* Dark gray text */
+  --button-hover-bg: #e0e0e0; /* Slightly darker gray on hover */
+  --button-selected-bg: #a9a9a9; /* Brighter gray when selected */
+  --button-selected-color: black; /* Black text when selected */
 }
 
 * {
@@ -53,7 +57,23 @@ a {
   margin-right: auto;
   padding-left: 80px;
   padding-right: 80px;
+ 
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #333;
+    --textColor: white;
+    --softBg: #444;
+    --softTextColor: #aaa;
+    --button-bg: #555; /* Dark gray */
+    --button-color: #ddd; /* Light gray text */
+    --button-hover-bg: #666; /* Slightly darker gray on hover */
+    --button-selected-bg: #999; /* Brighter gray when selected */
+    --button-selected-color: white; /* White text when selected */
+  }
+}
+
 
 @media screen and (max-width: 1536px) {
   .wrapper {
@@ -65,6 +85,9 @@ a {
     max-width: 1024px;
   }
 }
+
+
+
 @media screen and (max-width: 1024px) {
   .wrapper {
     max-width: 768px;

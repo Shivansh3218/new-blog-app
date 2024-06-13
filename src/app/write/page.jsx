@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import styles from "./writePage.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import Snackbar from '@mui/material/Snackbar';
+import { SnackbarContent } from '@mui/material';
 
 const categories = [
   "Lifestyle",
@@ -48,6 +50,8 @@ const WritePage = () => {
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [image, setImage] = useState(null); // Add this line
   const [quill, setQuill] = useState(null);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
  
   const inputRef = useRef();
 
@@ -63,12 +67,7 @@ const WritePage = () => {
     }
   };
 
-  // const handleImageChange = (e) => {
-  //   // Add this function
-  //   if (e.target.files[0]) {
-  //     setImage(URL.createObjectURL(e.target.files[0]));
-  //   }
-  // };
+
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -104,14 +103,7 @@ const handleSubmit = async () => {
   const user = JSON.parse(Cookies.get("user")); // Get the user cookie
 
   console.log(user);
-//   {
-//   "title": "Sample Post",
-//   "image": "http://example.com/image.jpg",
-//   "body": "This is the body of the sample post.",
-//   "authorId": "60b8d6c7e2e4b814c8a8c456",
-//   "authorEmail": "author@example.com",
-//   "categories": ["category1", "category2"]
-// }
+
   const payload = {
     title,
     image, // This is the image URL from the state
@@ -134,6 +126,7 @@ const handleSubmit = async () => {
   if (res.status === 200) {
     const data = await res.json();
     setSubmissionMessage("Your blog post has been successfully submitted!");
+    setOpenSnackbar(true); // Open the snackbar
   } else {
     console.log("Error:", res.statusText);
     setSubmissionMessage("An error occurred. Please try again later.");
@@ -141,18 +134,50 @@ const handleSubmit = async () => {
 };
 
   return (
-    <div className={styles.container}>  
-      {/* Title input */}
-      <input
-        type="text"
-        placeholder="Title"
-        className={styles.input}
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
 
-      {/* Editor */}
-      <div className={styles.editor}>
+
+<div className={styles.container}>
+  <div className={styles.titlePublish}>
+    {/* Title input */}
+    <input
+      type="text"
+      placeholder="Title"
+      className={styles.input}
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+
+    {/* Publish button */}
+    <button
+      className={`${styles.publish} ${
+        isButtonDisabled ? styles.disabled : ""
+      }`}
+      onClick={handleSubmit}
+      disabled={isButtonDisabled}
+    >
+      Publish now
+    </button>
+
+    <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={() => setOpenSnackbar(false)}
+  message={submissionMessage}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+  <SnackbarContent
+    style={{ backgroundColor: 'green', color: 'white' }}
+    message={submissionMessage}/>
+  </Snackbar>
+
+
+
+  </div>
+
+  {/* Editor and Category selection */}
+  <div className={styles.editorCategory}>
+    {/* Editor */}
+    <div className={styles.editor}>
+      <div style={{display:"flex"}}>
       <input
         type="file"
         id="image"
@@ -160,13 +185,11 @@ const handleSubmit = async () => {
         style={{ display: "none" }}
         onChange={handleImageChange}
       />
-        <button className={styles.addButton} >
+      <button className={styles.addButton}>
         <label htmlFor="image">
-        <Image src="/image.png" alt="Image" width={16} height={16} />
+          <Image src="/image.png" alt="Image" width={16} height={16} />
         </label>
-        </button>
-    
-        
+      </button>
 
       <ReactQuill
         className={styles.textArea}
@@ -191,33 +214,25 @@ const handleSubmit = async () => {
         }}
       />
       </div>
-
-      {/* Publish button */}
-      <button
-        className={`${styles.publish} ${
-          isButtonDisabled ? styles.disabled : ""
-        }`}
-        onClick={handleSubmit}
-        disabled={isButtonDisabled}
-      >
-        Publish now
-      </button>
-
-      {/* Category selection */}
-      <div className={styles.categorySelection}>
-        {categories.map((category) => (
-          <button
-            key={category}
-            className={`${styles.categoryButton} ${
-              selectedCategories.includes(category) ? styles.selected : ""
-            }`}
-            onClick={() => handleCategoryClick(category)}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
     </div>
+
+    {/* Category selection */}
+    <div className={styles.categorySelection}>
+      {categories.map((category) => (
+        <button
+          key={category}
+          className={`${styles.categoryButton} ${
+            selectedCategories.includes(category) ? styles.selected : ""
+          }`}
+          onClick={() => handleCategoryClick(category)}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
   );
 };
 
