@@ -1,11 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import Cookies from "js-cookie";
 import styles from "./writePage.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import Snackbar from '@mui/material/Snackbar';
+import { SnackbarContent } from '@mui/material';
 
 const categories = [
   "Lifestyle",
@@ -41,13 +43,17 @@ const categories = [
 ];
 
 const WritePage = () => {
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [title, setTitle] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [image, setImage] = useState(null); // Add this line
+  const [quill, setQuill] = useState(null);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+ 
+  const inputRef = useRef();
 
   useEffect(() => {
     setIsButtonDisabled(!(title && value && selectedCategories.length > 0));
@@ -61,12 +67,32 @@ const WritePage = () => {
     }
   };
 
+
+
   const handleImageChange = (e) => {
-    // Add this function
-    if (e.target.files[0]) {
-      setImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        setImage(event.target.result);
+      };
+
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
+
+
+
+  useEffect(() => {
+    if (quill) {
+      const selection = quill.getSelection();
+      if (selection) {
+        const cursorPosition = selection.index;
+        quill.insertEmbed(cursorPosition, 'image', image);
+        quill.setSelection(cursorPosition + 1);
+      }
+    }
+  }, [image]);
 
 const handleSubmit = async () => {
   if (!title || !value || selectedCategories.length === 0) {
@@ -77,18 +103,11 @@ const handleSubmit = async () => {
   const user = JSON.parse(Cookies.get("user")); // Get the user cookie
 
   console.log(user);
-//   {
-//   "title": "Sample Post",
-//   "image": "http://example.com/image.jpg",
-//   "body": "This is the body of the sample post.",
-//   "authorId": "60b8d6c7e2e4b814c8a8c456",
-//   "authorEmail": "author@example.com",
-//   "categories": ["category1", "category2"]
-// }
+
   const payload = {
     title,
     image, // This is the image URL from the state
-    body: value, // This is the post body from the state
+    body: value.replace(/<p>|<\/p>/g, ''), // This is the post body from the state
     authorEmail: user?.email, // Use the email from the cookie
     authorId: user?.id, // Use the user from the cookie
     categories: selectedCategories, // This is the selected categories from the state
@@ -102,9 +121,12 @@ const handleSubmit = async () => {
     },
   });
 
+  console.log(res,'res');
+
   if (res.status === 200) {
     const data = await res.json();
     setSubmissionMessage("Your blog post has been successfully submitted!");
+    setOpenSnackbar(true); // Open the snackbar
   } else {
     console.log("Error:", res.statusText);
     setSubmissionMessage("An error occurred. Please try again later.");
@@ -112,82 +134,105 @@ const handleSubmit = async () => {
 };
 
   return (
-    <div className={styles.container}>  
-      {/* Title input */}
+
+
+<div className={styles.container}>
+  <div className={styles.titlePublish}>
+    {/* Title input */}
+    <input
+      type="text"
+      placeholder="Title"
+      className={styles.input}
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+
+    {/* Publish button */}
+    <button
+      className={`${styles.publish} ${
+        isButtonDisabled ? styles.disabled : ""
+      }`}
+      onClick={handleSubmit}
+      disabled={isButtonDisabled}
+    >
+      Publish now
+    </button>
+
+    <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={() => setOpenSnackbar(false)}
+  message={submissionMessage}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+  <SnackbarContent
+    style={{ backgroundColor: 'green', color: 'white' }}
+    message={submissionMessage}/>
+  </Snackbar>
+
+
+
+  </div>
+
+  {/* Editor and Category selection */}
+  <div className={styles.editorCategory}>
+    {/* Editor */}
+    <div className={styles.editor}>
+      <div style={{display:"flex"}}>
       <input
-        type="text"
-        placeholder="Title"
-        className={styles.input}
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        type="file"
+        id="image"
+        ref={inputRef}
+        style={{ display: "none" }}
+        onChange={handleImageChange}
       />
-
-      {/* Editor */}
-      <div className={styles.editor}>
-        <button className={styles.button} onClick={() => setOpen(!open)}>
-          <Image src="/plus.png" alt="Add" width={16} height={16} />
-        </button>
-        {open && (
-          <div className={styles.add}>
-            <input
-              type="file"
-              id="image"
-              style={{ display: "none" }}
-              onChange={handleImageChange} // Add this line
-            />
-            <button className={styles.addButton}>
-              <label htmlFor="image">
-                <Image src="/image.png" alt="Image" width={16} height={16} />
-              </label>
-            </button>
-            <button className={styles.addButton}>
-              <Image
-                src="/external.png"
-                alt="External"
-                width={16}
-                height={16}
-              />
-            </button>
-            <button className={styles.addButton}>
-              <Image src="/video.png" alt="Video" width={16} height={16} />
-            </button>
-          </div>
-        )}
-        <ReactQuill
-          className={styles.textArea}
-          theme="bubble"
-          value={value}
-          onChange={setValue}
-          placeholder="Tell your story..."
-        />
-      </div>
-
-      {/* Publish button */}
-      <button
-        className={`${styles.publish} ${
-          isButtonDisabled ? styles.disabled : ""
-        }`}
-        onClick={handleSubmit}
-        disabled={isButtonDisabled}
-      >
-        Publish now
+      <button className={styles.addButton}>
+        <label htmlFor="image">
+          <Image src="/image.png" alt="Image" width={16} height={16} />
+        </label>
       </button>
 
-      {/* Category selection */}
-      <div className={styles.categorySelection}>
-        {categories.map((category) => (
-          <button
-            key={category}
-            className={`${styles.categoryButton} ${
-              selectedCategories.includes(category) ? styles.selected : ""
-            }`}
-            onClick={() => handleCategoryClick(category)}
-          >
-            {category}
-          </button>
-        ))}
+      <ReactQuill
+        className={styles.textArea}
+        theme="bubble"
+        value={value}
+        onChange={setValue}
+        placeholder="Tell your story..."
+        modules={{
+          toolbar: {
+            container: [
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ 'header': 1 }, { 'header': 2 }],  // Add headings
+              ['link', 'image', 'code-block'],  // Add link
+            ],
+          },
+        }}
+        formats={['bold', 'italic', 'underline', 'strike', 'header', 'link', 'image', 'code-block']}
+        ref={(el) => {
+          if (el != null) {
+            setQuill(el.getEditor());
+          }
+        }}
+      />
       </div>
     </div>
+
+    {/* Category selection */}
+    <div className={styles.categorySelection}>
+      {categories.map((category) => (
+        <button
+          key={category}
+          className={`${styles.categoryButton} ${
+            selectedCategories.includes(category) ? styles.selected : ""
+          }`}
+          onClick={() => handleCategoryClick(category)}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
   );
 };
 
