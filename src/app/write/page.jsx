@@ -83,7 +83,7 @@ const WritePage = () => {
     }
   };
   const user = JSON.parse(Cookies.get("user")); // Get the user cookie
-  console.log(user, "user");
+
 
   useEffect(() => {
     if (quill) {
@@ -103,9 +103,6 @@ const WritePage = () => {
     }
 
     const user = JSON.parse(Cookies.get("user")); // Get the user cookie
-
-    console.log(user);
-
     const payload = {
       title,
       image, // This is the image URL from the state

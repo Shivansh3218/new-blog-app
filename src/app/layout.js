@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
         <script
           src="https://accounts.google.com/gsi/client"
           defer
-          async
+          
         ></script>
       </head>
       <body className="inter">
