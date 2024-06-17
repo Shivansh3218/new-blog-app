@@ -59,7 +59,7 @@ const RecentPosts = () => {
     <div className={styles.container}>
       <h1 className={styles.heading}>Recent Posts</h1>
       <ul>
-        {posts.map((post) => (
+        {posts.length>0&& posts.map((post) => (
           <li className={styles.post} key={post.id}>
             {post.image ? (
               <img src={post.image} alt="Post Image" className={styles.image} />

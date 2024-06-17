@@ -19,10 +19,12 @@ model Post {
   image   String ?
   body     String
   author   User      @relation(fields: [authorId], references: [id])
+  authorName String
   authorEmail String
   authorId String    @db.ObjectId
   categories String[]
   comments Comment[]
+  date     DateTime  @default(now())
 }
 
 model User {
