@@ -1,14 +1,17 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import dynamic from 'next/dynamic';
 import Image from "next/image";
 
 import Cookies from "js-cookie";
 import styles from "./writePage.module.css";
-import ReactQuill from "react-quill";
+// import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import Snackbar from '@mui/material/Snackbar';
 import { SnackbarContent } from '@mui/material';
 import { user } from "@nextui-org/react";
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const categories = [
   "Lifestyle",
