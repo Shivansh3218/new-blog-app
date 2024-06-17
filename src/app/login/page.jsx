@@ -32,7 +32,7 @@ const handleCallbackResponse = async (response) => {
       Cookies.set("user", JSON.stringify(userData));
       setUser(userData);
       
-      router.push("/");
+      router.push("/home");
     } else {
       // If user doesn't exist, make a POST request to add the user
       const user = await fetch("/api/users", {
@@ -54,7 +54,7 @@ const handleCallbackResponse = async (response) => {
       Cookies.set("user", JSON.stringify(userResponse));
       setUser(userResponse);
 
-      router.push("/");
+      router.push("/home");
     }
   } catch (error) {
     console.error(error);
