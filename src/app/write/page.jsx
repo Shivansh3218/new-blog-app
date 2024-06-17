@@ -54,7 +54,6 @@ const WritePage = () => {
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [image, setImage] = useState(null); // Add this line
   const [quill, setQuill] = useState(null);
-
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const inputRef = useRef();
@@ -71,15 +70,40 @@ const WritePage = () => {
     }
   };
 
+
+  console.log("image", image)
+
+  // const handleImageChange = (e) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     const reader = new FileReader();
+
+  //     reader.onload = (event) => {
+  //       setImage(event.target.result);
+  //     };
+
+  //     reader.readAsDataURL(e.target.files[0]);
+  //   }
+  // };
+
+
+
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
+  
+      if (!allowedTypes.includes(file.type)) {
+        alert('Only PNG, JPG, and GIF files are allowed.');
+        return;
+      }
+  
       const reader = new FileReader();
-
+  
       reader.onload = (event) => {
         setImage(event.target.result);
       };
-
-      reader.readAsDataURL(e.target.files[0]);
+  
+      reader.readAsDataURL(file);
     }
   };
   const user = JSON.parse(Cookies.get("user")); // Get the user cookie
@@ -121,8 +145,6 @@ const WritePage = () => {
       },
     });
 
-    console.log(res, "res");
-
     if (res.status === 200) {
       const data = await res.json();
       setSubmissionMessage("Your blog post has been successfully submitted!");
@@ -132,6 +154,7 @@ const WritePage = () => {
       setSubmissionMessage("An error occurred. Please try again later.");
     }
   };
+
 
   return (
     <div className={styles.container}>
@@ -188,6 +211,7 @@ const WritePage = () => {
               </label>
             </button>
 
+
             <ReactQuill
               className={styles.textArea}
               theme="bubble"
@@ -219,7 +243,15 @@ const WritePage = () => {
                 }
               }}
             />
+           
+
+            
           </div>
+          {image && (
+  <div className={styles.imagePreview}>
+    <img src={image} alt="Selected" style={{ maxWidth: '100%', maxHeight: '300px' }} />
+  </div>
+)}
         </div>
 
         {/* Category selection */}
