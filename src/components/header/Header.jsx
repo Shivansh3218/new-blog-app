@@ -8,11 +8,11 @@ import AuthLink from "../auth/AuthLink";
 import Cookies from "js-cookie";
 const Header = () => {
    
-
+const user = Cookies.get("user");
 
   return (
     <div className={styles.container}>
-      <Link href="/">
+      <Link href= {user?"/home":"/"}>
         <div className={styles.logo}>Dev Sama Blog</div>
       </Link>
       <div className={styles.links}>

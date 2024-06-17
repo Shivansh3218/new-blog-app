@@ -1,16 +1,15 @@
 /* index.module.css */
 
-.container {
+/* .container {
   max-width: 800px;
   margin: 2rem auto 0 0;
   padding: 20px;
-}
+} */
 
 .container > ul {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
-
 }
 
 .post {
@@ -18,7 +17,9 @@
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 20px;
-    flex-grow: 1;
+  max-width: 30%;
+  min-width: 25%;
+  flex-grow: 1;
 }
 
 .post h2 {
@@ -66,7 +67,7 @@
 }
 
 .authorName {
-  font-size:1rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -79,6 +80,23 @@
   margin-bottom: 0.5em;
   color: #333;
   font-weight: bolder;
+}
+
+
+
+.readMore {
+  color: blue;
+  text-decoration: none;
+}
+
+.error {
+  color: red;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 /* Media Queries for Mobile Screens */
 @media (max-width: 768px) {
