@@ -1,17 +1,20 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import Cookies from "js-cookie";
 import styles from "./writePage.module.css";
-// import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
-import Snackbar from '@mui/material/Snackbar';
-import { SnackbarContent } from '@mui/material';
+import Snackbar from "@mui/material/Snackbar";
+import CloseIcon from "@mui/icons-material/Close";
+import { SnackbarContent } from "@mui/material";
 import { user } from "@nextui-org/react";
+import CircularProgress from "@mui/material/CircularProgress";
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import Box from "@mui/material/Box";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const categories = [
   "Lifestyle",
@@ -55,59 +58,41 @@ const WritePage = () => {
   const [image, setImage] = useState(null); // Add this line
   const [quill, setQuill] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [highlightCategories, setHighlightCategories] = useState(false);
 
   const inputRef = useRef();
 
   useEffect(() => {
-    setIsButtonDisabled(!(title && value && selectedCategories.length > 0));
-  }, [title, value, selectedCategories]);
+    setIsButtonDisabled(!(title && value));
+  }, [title, value]);
+
 
   const handleCategoryClick = (category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter((c) => c !== category));
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((c) => c !== category)
+        : [...prevCategories, category]
+    );
   };
-
-
-  console.log("image", image)
-
-  // const handleImageChange = (e) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     const reader = new FileReader();
-
-  //     reader.onload = (event) => {
-  //       setImage(event.target.result);
-  //     };
-
-  //     reader.readAsDataURL(e.target.files[0]);
-  //   }
-  // };
-
-
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
+      const allowedTypes = ["image/png", "image/jpeg", "image/gif"];
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PNG, JPG, and GIF files are allowed.');
+        alert("Only PNG, JPG, and GIF files are allowed.");
         return;
       }
   
-      const reader = new FileReader();
-  
-      reader.onload = (event) => {
-        setImage(event.target.result);
-      };
-  
-      reader.readAsDataURL(file);
+      // Use URL.createObjectURL to create a URL for the file
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
     }
   };
   const user = JSON.parse(Cookies.get("user")); // Get the user cookie
-
 
   useEffect(() => {
     if (quill) {
@@ -121,11 +106,13 @@ const WritePage = () => {
   }, [image]);
 
   const handleSubmit = async () => {
-    if (!title || !value || selectedCategories.length === 0) {
-      console.log("Please fill in all required fields");
-      return;
+    if (selectedCategories.length === 0) {
+      // Highlight category selection area
+      setHighlightCategories(true);
+      setTimeout(() => setHighlightCategories(false), 3000); // Remove highlight after 3 seconds
+      return; // Prevent form submission
     }
-
+    setIsLoading(true);
     const user = JSON.parse(Cookies.get("user")); // Get the user cookie
     const payload = {
       title,
@@ -145,19 +132,51 @@ const WritePage = () => {
       },
     });
 
+    setIsLoading(false);
+
     if (res.status === 200) {
       const data = await res.json();
       setSubmissionMessage("Your blog post has been successfully submitted!");
       setOpenSnackbar(true); // Open the snackbar
+      // Reset form
+      setTitle("");
+      setValue("");
+      setSelectedCategories([]);
+      setImage(null);
     } else {
       console.log("Error:", res.statusText);
       setSubmissionMessage("An error occurred. Please try again later.");
     }
   };
 
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.backgroundColor = "black";
+    } else {
+      document.body.style.backgroundColor = "";
+    }
+  }, [isLoading]);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ position: "relative" }}>
+      {isLoading && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.768);",
+          }}
+        >
+          <CircularProgress color="success" />
+        </Box>
+      )}
+
       <div className={styles.titlePublish}>
         {/* Title input */}
         <input
@@ -192,8 +211,6 @@ const WritePage = () => {
           />
         </Snackbar>
       </div>
-
-      {/* Editor and Category selection */}
       <div className={styles.editorCategory}>
         {/* Editor */}
         <div className={styles.editor}>
@@ -210,7 +227,6 @@ const WritePage = () => {
                 <Image src="/image.png" alt="Image" width={16} height={16} />
               </label>
             </button>
-
 
             <ReactQuill
               className={styles.textArea}
@@ -243,19 +259,55 @@ const WritePage = () => {
                 }
               }}
             />
-           
-
-            
           </div>
-          {image && (
-  <div className={styles.imagePreview}>
-    <img src={image} alt="Selected" style={{ maxWidth: '100%', maxHeight: '300px' }} />
-  </div>
-)}
-        </div>
 
+          {image && (
+            <div
+              className={styles.imagePreview}
+              style={{ position: "relative", display: "inline-block" }}
+            >
+              <div style={{ position: "relative", display: "inline-flex" }}>
+                <img
+                  src={image}
+                  alt="Selected"
+                  style={{ maxWidth: "100%", maxHeight: "300px" }}
+                />
+                <CloseIcon
+                  onClick={() => setImage(null)}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    cursor: "pointer",
+                    color: "red", // Change as needed
+                    backgroundColor: "white", // Optional for better visibility
+                    borderRadius: "50%", // Optional for a rounded shape
+                    margin: "5px", // Ensures the icon does not overlap the image border
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
         {/* Category selection */}
-        <div className={styles.categorySelection}>
+
+        <div
+          className={`${styles.categorySelection} ${
+            highlightCategories ? styles.highlight : ""
+          }`}
+        >
+          {highlightCategories && (
+            <div
+              style={{
+                textAlign: "center",
+                color: "red",
+                marginBottom: "10px",
+              }}
+            >
+              Please select a category before publishing
+            </div>
+          )}
+
           {categories.map((category) => (
             <button
               key={category}
@@ -274,4 +326,3 @@ const WritePage = () => {
 };
 
 export default WritePage;
-
