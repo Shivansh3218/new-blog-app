@@ -11,7 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { SnackbarContent } from "@mui/material";
 import { user } from "@nextui-org/react";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import Alert from '@mui/material/Alert'
 import Box from "@mui/material/Box";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -59,6 +59,7 @@ const WritePage = () => {
   const [quill, setQuill] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+ 
 
   const [highlightCategories, setHighlightCategories] = useState(false);
 
@@ -198,18 +199,27 @@ const WritePage = () => {
           Publish now
         </button>
 
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={() => setOpenSnackbar(false)}
-          message={submissionMessage}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        >
-          <SnackbarContent
-            style={{ backgroundColor: "green", color: "white" }}
-            message={submissionMessage}
-          />
-        </Snackbar>
+    
+
+<Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+  <Alert
+    onClose={() => setOpenSnackbar(false)}
+    severity="success"
+    variant="filled"
+    sx={{
+      width: 'auto',
+      height: 'auto', 
+      maxWidth: '100%', 
+      fontSize: '1.25rem', 
+    }}
+  >
+    {submissionMessage} {/* Use your dynamic message here */}
+  </Alert>
+</Snackbar>
+
+        
+
+
       </div>
       <div className={styles.editorCategory}>
         {/* Editor */}
