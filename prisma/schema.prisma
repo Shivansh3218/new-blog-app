@@ -40,5 +40,6 @@ model Comment {
   comment String
   post    Post   @relation(fields: [postId], references: [id])
   postId  String @db.ObjectId
+  author String
 }
 

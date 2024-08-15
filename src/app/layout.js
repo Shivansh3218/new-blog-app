@@ -14,11 +14,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script
+        {/* <script
           src="https://accounts.google.com/gsi/client"
           defer
           
-        ></script>
+        ></script> */}
       </head>
       <body className="inter">
         <AuthProvider>
