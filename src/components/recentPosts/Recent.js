@@ -65,23 +65,23 @@ const RecentPosts = () => {
 
   if (loading) {
     return (
-      <>
+      <div className={styles.loadingContainer}>
         <div className={styles.container}>
           <Skeleton variant="text" />
           <Skeleton variant="circular" width={40} height={40} />
-          <Skeleton variant="rectangular" width={210} height={118} />
+          <Skeleton variant="rectangular" width={300} height={118} />
         </div>
         <div className={styles.container}>
           <Skeleton variant="text" />
           <Skeleton variant="circular" width={40} height={40} />
-          <Skeleton variant="rectangular" width={210} height={118} />
+          <Skeleton variant="rectangular" width={300} height={118} />
         </div>
         <div className={styles.container}>
           <Skeleton variant="text" />
           <Skeleton variant="circular" width={40} height={40} />
-          <Skeleton variant="rectangular" width={210} height={118} />
+          <Skeleton variant="rectangular" width={300} height={118} />
         </div>
-      </>
+      </div>
     );
   }
 
@@ -89,6 +89,12 @@ const RecentPosts = () => {
     return <p className={styles.error}>Error: {error}</p>;
   }
 
+  const handleReadMore = (post) => {
+    // Store the entire post in localStorage
+    localStorage.setItem("selectedPost", JSON.stringify(post));
+
+    // Navigate to the detail page
+  };
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Recent Posts</h1>
@@ -105,9 +111,11 @@ const RecentPosts = () => {
             <h2 className={styles.title}>{post.title}</h2>
             <p>
               {truncateText(post.body, 100)} &nbsp;
-              <a href={`/post/${post.id}`} className={styles.readMore}>
-                Read More
-              </a>
+              <button onClick={() => handleReadMore(post)}>
+                <a href={`/post/${post.id}`} className={styles.readMore}>
+                  Read More
+                </a>
+              </button>
             </p>
           </li>
         ))}

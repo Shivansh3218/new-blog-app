@@ -1,17 +1,28 @@
 /* index.module.css */
 
-/* .container {
+.container {
   max-width: 800px;
   margin: 2rem auto 0 0;
   padding: 20px;
-} */
+  display: flex ;
+  flex-direction: column;
+  gap: 1em;
+}
 
 .container > ul {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
+.loadingContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 4rem;
+}
 .post {
   border: 1px solid #ccc;
   border-radius: 5px;

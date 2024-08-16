@@ -9,7 +9,7 @@ export default function Home() {
     <main className={styles.main}>
       <Featured />
       <RecentPosts/>
-      <CategoryList />
+      {/* <CategoryList /> */}
     </main>
   );
 }
